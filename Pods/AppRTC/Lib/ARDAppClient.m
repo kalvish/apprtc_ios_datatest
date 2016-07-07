@@ -683,7 +683,7 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
 
 - (RTCMediaConstraints *)defaultPeerConnectionConstraints {
   NSArray *optionalConstraints = @[
-      [[RTCPair alloc] initWithKey:@"internalSctpDataChannels" value:@"true"],
+      
       [[RTCPair alloc] initWithKey:@"DtlsSrtpKeyAgreement" value:@"true"]
   ];
   RTCMediaConstraints* constraints =
