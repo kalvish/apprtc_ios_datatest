@@ -46,6 +46,7 @@
 #import "RTCSessionDescriptionDelegate.h"
 #import "RTCVideoCapturer.h"
 #import "RTCVideoTrack.h"
+#import "RTCDataChannel.h"
 
 // TODO(tkchin): move these to a configuration object.
 static NSString *kARDRoomServerHostUrl =
@@ -74,9 +75,10 @@ static NSInteger kARDAppClientErrorInvalidClient = -6;
 static NSInteger kARDAppClientErrorInvalidRoom = -7;
 
 @interface ARDAppClient () <ARDWebSocketChannelDelegate,
-    RTCPeerConnectionDelegate, RTCSessionDescriptionDelegate>
+    RTCPeerConnectionDelegate, RTCSessionDescriptionDelegate, RTCDataChannelDelegate>
 @property(nonatomic, strong) ARDWebSocketChannel *channel;
 @property(nonatomic, strong) RTCPeerConnection *peerConnection;
+@property(nonatomic, strong) RTCDataChannel *dataChannel;
 @property(nonatomic, strong) RTCPeerConnectionFactory *factory;
 @property(nonatomic, strong) NSMutableArray *messageQueue;
 
@@ -99,6 +101,7 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
 @synthesize serverHostUrl = _serverHostUrl;
 @synthesize channel = _channel;
 @synthesize peerConnection = _peerConnection;
+@synthesize dataChannel = _dataChannel;
 @synthesize factory = _factory;
 @synthesize messageQueue = _messageQueue;
 @synthesize isTurnComplete = _isTurnComplete;
@@ -238,6 +241,42 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
   self.state = kARDAppClientStateDisconnected;
 }
 
+- (BOOL)isActive
+{
+    return (_dataChannel && (_dataChannel.state == kRTCDataChannelStateOpen));
+}
+
+- (void)sendMessage:(NSString*)message {
+    if ([self isActive])
+    {
+        NSError *error;
+        NSDictionary *messageDict = @{@"message": message};
+        NSData *messageData = [NSJSONSerialization dataWithJSONObject:messageDict options:0 error:&error];
+        
+        if (!error)
+        {
+            RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:messageData isBinary:NO];
+            if ([_dataChannel sendData:data])
+            {
+                //successHandler();
+                int a = 0;
+            }
+            else
+            {
+                //errorHandler(@"Message failed to send");
+            }
+        }
+        else
+        {
+            //errorHandler(@"Unable to encode message to JSON");
+        }
+    }
+    else
+    {
+        //errorHandler(@"dataChannel not in an open state.");
+    }
+}
+
 #pragma mark - ARDWebSocketChannelDelegate
 
 - (void)channel:(ARDWebSocketChannel *)channel
@@ -324,7 +363,23 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
 }
 
 - (void)peerConnection:(RTCPeerConnection*)peerConnection
-    didOpenDataChannel:(RTCDataChannel*)dataChannel {
+    didOpenDataChannel:(RTCDataChannel*)newDataChannel {
+    if (_dataChannel)
+    {
+        // Replacing the previous connection, so disable delegate messages from the old instance
+        _dataChannel.delegate = nil;
+    }
+    else
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //Respoke
+             // This callback will not be called in this test. It is only triggered when adding a directConnection to an existing call, which is currently not supported.
+          //  [self.delegate onStart:self];
+        });
+    }
+    
+    _dataChannel = newDataChannel;
+    _dataChannel.delegate = self;
 }
 
 #pragma mark - RTCSessionDescriptionDelegate
@@ -381,6 +436,77 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
   });
 }
 
+#pragma mark - RTCDataChannelDelegate
+// Called when the data channel state has changed.
+- (void)channelDidChangeState:(RTCDataChannel*)channel {
+    switch (channel.state)
+    {
+        case kRTCDataChannelStateConnecting:
+            NSLog(@"Direct connection CONNECTING");
+            break;
+            
+        case kRTCDataChannelStateOpen:
+        {
+            NSLog(@"Direct connection OPEN");
+            //[call directConnectionDidOpen:self];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //[self.delegate onOpen:self];
+            });
+        }
+            break;
+            
+        case kRTCDataChannelStateClosing:
+            NSLog(@"Direct connection CLOSING");
+            break;
+            
+        case kRTCDataChannelStateClosed:
+        {
+            NSLog(@"Direct connection CLOSED");
+            _dataChannel = nil;
+            //[call directConnectionDidClose:self];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //[self.delegate onClose:self];
+            });
+        }
+            break;
+    }
+}
+
+// Called when a data buffer was successfully received.
+- (void)channel:(RTCDataChannel*)channel
+didReceiveMessageWithBuffer:(RTCDataBuffer*)buffer {
+    id message = nil;
+    NSError *error;
+    
+    id jsonResult = [NSJSONSerialization JSONObjectWithData:buffer.data options:0 error:&error];
+    if (error)
+    {
+        // Could not parse JSON data, so just pass it as it is
+        message = buffer.data;
+        NSLog(@"Direct Message received (binary)");
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //[self.delegate onMessage:message sender:self];
+        });
+    }
+    else
+    {
+        if (jsonResult && ([jsonResult isKindOfClass:[NSDictionary class]]))
+        {
+            NSDictionary *dict = (NSDictionary*)jsonResult;
+            NSString *messageText = [dict objectForKey:@"message"];
+            
+            if (messageText)
+            {
+                NSLog(@"Direct Message received: [%@]", messageText);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    //[self.delegate onMessage:messageText sender:self];
+                });
+            }
+        }
+    }
+
+}
+
 #pragma mark - Private
 
 - (BOOL)isRegisteredWithRoomServer {
@@ -401,9 +527,18 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
   RTCMediaStream *localStream = [self createLocalMediaStream];
   [_peerConnection addStream:localStream];
   if (_isInitiator) {
+      
+      //Create data channel
+      //RTCPeerConnection *peerConnection = [call getPeerConnection];
+      RTCDataChannelInit *initData = [[RTCDataChannelInit alloc] init];
+      _dataChannel = [_peerConnection createDataChannelWithLabel:@"BoardPACDataChannel" config:initData];
+      _dataChannel.delegate = self;
+      
     [self sendOffer];
   } else {
     [self waitForAnswer];
+      
+      
   }
 }
 

@@ -21,5 +21,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *roomText;
 - (IBAction)onclickstart:(id)sender;
 
+- (IBAction)onSendMessageToPeer:(id)sender;
 @end
 

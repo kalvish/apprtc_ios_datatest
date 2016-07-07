@@ -98,6 +98,12 @@
     
 }
 
+-(void)onSendMessageToPeer:(id)sender {
+    if(self.client){
+        [self.client sendMessage:@"Test message"];
+    }
+}
+
 - (void)disconnect {
     if (self.client) {
         if (self.localVideoTrack) [self.localVideoTrack removeRenderer:self.localView];
