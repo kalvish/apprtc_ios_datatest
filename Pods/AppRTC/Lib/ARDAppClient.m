@@ -46,7 +46,7 @@
 #import "RTCSessionDescriptionDelegate.h"
 #import "RTCVideoCapturer.h"
 #import "RTCVideoTrack.h"
-#import "RTCDataChannel.h"
+
 
 // TODO(tkchin): move these to a configuration object.
 static NSString *kARDRoomServerHostUrl =
@@ -92,6 +92,8 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
 @property(nonatomic, strong) NSMutableArray *iceServers;
 @property(nonatomic, strong) NSURL *webSocketURL;
 @property(nonatomic, strong) NSURL *webSocketRestURL;
+
+@property(nonatomic, assign) BOOL isToggle;
 @end
 
 @implementation ARDAppClient
@@ -250,12 +252,26 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
     if ([self isActive])
     {
         NSError *error;
-        NSDictionary *messageDict = @{@"message": message};
-        NSData *messageData = [NSJSONSerialization dataWithJSONObject:messageDict options:0 error:&error];
         
+        
+        
+       // NSDictionary *messageDict = @{@"message": message};
+       // NSData *messageData = [NSJSONSerialization dataWithJSONObject:messageDict options:0 error:&error];
+        
+        UIImage * thumbnail = nil;
+        if(self.isToggle){
+        //NSData *sendingData = UIImagePNGRepresentation([UIImage imageNamed:@"test.PNG"]);
+          thumbnail = [UIImage imageNamed: @"test.PNG"];
+            self.isToggle = NO;
+        }else{
+            thumbnail = [UIImage imageNamed: @"old.png"];
+            self.isToggle = YES;
+        }
+        NSData *imagedata = UIImagePNGRepresentation(thumbnail);
         if (!error)
         {
-            RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:messageData isBinary:NO];
+            //RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:messageData isBinary:NO];
+            RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:imagedata isBinary:NO];
             if ([_dataChannel sendData:data])
             {
                 //successHandler();
@@ -270,6 +286,22 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
         {
             //errorHandler(@"Unable to encode message to JSON");
         }
+        
+       /* NSData *sendData = UIImagePNGRepresentation([UIImage imageNamed:@"test2.PNG"]);
+        NSUInteger length = [sendData length];
+        NSUInteger chunkSize = 100 * 1024;
+        NSUInteger offset = 0;
+        do {
+            NSUInteger thisChunkSize = length - offset > chunkSize ? chunkSize : length - offset;
+            NSData* chunk = [NSData dataWithBytesNoCopy:(char *)[sendData bytes] + offset
+                                                 length:thisChunkSize
+                                           freeWhenDone:NO];
+            NSLog(@"chunk length : %lu",(unsigned long)chunk.length);
+            
+            [marrFileData addObject:[NSData dataWithData:chunk]];
+            offset += thisChunkSize;
+        } while (offset < length);*/
+        
     }
     else
     {
@@ -475,35 +507,48 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
 // Called when a data buffer was successfully received.
 - (void)channel:(RTCDataChannel*)channel
 didReceiveMessageWithBuffer:(RTCDataBuffer*)buffer {
-    id message = nil;
-    NSError *error;
-    
-    id jsonResult = [NSJSONSerialization JSONObjectWithData:buffer.data options:0 error:&error];
-    if (error)
-    {
-        // Could not parse JSON data, so just pass it as it is
-        message = buffer.data;
-        NSLog(@"Direct Message received (binary)");
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //[self.delegate onMessage:message sender:self];
-        });
-    }
-    else
-    {
-        if (jsonResult && ([jsonResult isKindOfClass:[NSDictionary class]]))
-        {
-            NSDictionary *dict = (NSDictionary*)jsonResult;
-            NSString *messageText = [dict objectForKey:@"message"];
-            
-            if (messageText)
-            {
-                NSLog(@"Direct Message received: [%@]", messageText);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    //[self.delegate onMessage:messageText sender:self];
-                });
-            }
-        }
-    }
+    [_delegate appClient:self rtcDataChannel:channel didReceiveRCTDataBufer:buffer];
+//    id message = nil;
+//    NSError *error;
+//    
+//    NSData *temp = buffer.data;
+//    NSString* str = [[NSString alloc] initWithData:temp
+//                                           encoding:NSUTF8StringEncoding];
+//    
+//    
+//    if (str && [str length] > 0){
+//        NSLog(@"Contains string");
+//    }else{
+//        NSLog(@"Does't contains string");
+//        
+//    }
+//    
+//    id jsonResult = [NSJSONSerialization JSONObjectWithData:buffer.data options:0 error:&error];
+//    if (error)
+//    {
+//        // Could not parse JSON data, so just pass it as it is
+//        message = buffer.data;
+//        NSLog(@"Direct Message received (binary)");
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            //[self.delegate onMessage:message sender:self];
+//        });
+//    }
+//    else
+//    {
+//        if (jsonResult && ([jsonResult isKindOfClass:[NSDictionary class]]))
+//        {
+//            NSDictionary *dict = (NSDictionary*)jsonResult;
+//            NSString *messageText = [dict objectForKey:@"message"];
+//            
+//            if (messageText)
+//            {
+//                NSLog(@"Direct Message received: [%@]", messageText);
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    //[self.delegate onMessage:messageText sender:self];
+//                });
+//            }
+//        }
+//    }
 
 }
 
@@ -524,12 +569,11 @@ didReceiveMessageWithBuffer:(RTCDataBuffer*)buffer {
   _peerConnection = [_factory peerConnectionWithICEServers:_iceServers
                                                constraints:constraints
                                                   delegate:self];
-  RTCMediaStream *localStream = [self createLocalMediaStream];
-  [_peerConnection addStream:localStream];
+  //RTCMediaStream *localStream = [self createLocalMediaStream];
+  //[_peerConnection addStream:localStream];
   if (_isInitiator) {
       
       //Create data channel
-      //RTCPeerConnection *peerConnection = [call getPeerConnection];
       RTCDataChannelInit *initData = [[RTCDataChannelInit alloc] init];
       _dataChannel = [_peerConnection createDataChannelWithLabel:@"BoardPACDataChannel" config:initData];
       _dataChannel.delegate = self;
@@ -807,7 +851,7 @@ didReceiveMessageWithBuffer:(RTCDataBuffer*)buffer {
 - (RTCMediaConstraints *)defaultOfferConstraints {
   NSArray *mandatoryConstraints = @[
       [[RTCPair alloc] initWithKey:@"OfferToReceiveAudio" value:@"true"],
-      [[RTCPair alloc] initWithKey:@"OfferToReceiveVideo" value:@"true"]
+      [[RTCPair alloc] initWithKey:@"OfferToReceiveVideo" value:@"false"]
   ];
   RTCMediaConstraints* constraints =
       [[RTCMediaConstraints alloc]

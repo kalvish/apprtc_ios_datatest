@@ -15,6 +15,8 @@
 
 @implementation ViewController
 
+@synthesize imageReceived;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -69,6 +71,59 @@
     [self.remoteVideoTrack addRenderer:self.remoteView];
 }
 
+- (void)appClient:(ARDAppClient *)client rtcDataChannel:(RTCDataChannel *)rtcDC didReceiveRCTDataBufer:(RTCDataBuffer *)rtcDataBuffer {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSData *temp = rtcDataBuffer.data;
+        UIImage *imageRx= [UIImage imageWithData:temp];
+        [imageReceived setImage:imageRx];
+    });
+  
+    //imageReceived.image = imageRx;
+    
+//    id message = nil;
+//    NSError *error;
+//    
+//    NSData *temp = rtcDataBuffer.data;
+//    NSString* str = [[NSString alloc] initWithData:temp
+//                                          encoding:NSUTF8StringEncoding];
+//    
+//    
+//    if (str && [str length] > 0){
+//        NSLog(@"Contains string");
+//    }else{
+//        NSLog(@"Does't contains string");
+//        
+//    }
+//    
+//    id jsonResult = [NSJSONSerialization JSONObjectWithData:rtcDataBuffer.data options:0 error:&error];
+//    if (error)
+//    {
+//        // Could not parse JSON data, so just pass it as it is
+//        message = rtcDataBuffer.data;
+//        NSLog(@"Direct Message received (binary)");
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            //[self.delegate onMessage:message sender:self];
+//        });
+//    }
+//    else
+//    {
+//        if (jsonResult && ([jsonResult isKindOfClass:[NSDictionary class]]))
+//        {
+//            NSDictionary *dict = (NSDictionary*)jsonResult;
+//            NSString *messageText = [dict objectForKey:@"message"];
+//            
+//            if (messageText)
+//            {
+//                NSLog(@"Direct Message received: [%@]", messageText);
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    //[self.delegate onMessage:messageText sender:self];
+//                });
+//            }
+//        }
+//    }
+}
+
 - (void)appClient:(ARDAppClient *)client didError:(NSError *)error {
     /* Handle the error */
     UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:nil
@@ -95,7 +150,10 @@
     [self.client setServerHostUrl:@"https://apprtc.appspot.com"];
     [self.client connectToRoomWithId:temp options:nil];
 
-    
+    /*UIImage * thumbnail = [UIImage imageNamed: @"test.PNG"];
+    NSData *imagedata = UIImagePNGRepresentation(thumbnail);
+    UIImage *imageRx= [UIImage imageWithData:imagedata];
+    [imageReceived setImage:imageRx];*/
 }
 
 -(void)onSendMessageToPeer:(id)sender {

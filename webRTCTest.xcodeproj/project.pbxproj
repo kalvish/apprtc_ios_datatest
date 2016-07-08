@@ -14,6 +14,8 @@
 		9039C7111CE1A09700D9CA38 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9039C70F1CE1A09700D9CA38 /* Main.storyboard */; };
 		9039C7131CE1A09700D9CA38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9039C7121CE1A09700D9CA38 /* Assets.xcassets */; };
 		9039C7161CE1A09700D9CA38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9039C7141CE1A09700D9CA38 /* LaunchScreen.storyboard */; };
+		90B504C61D2F784D00F437D3 /* test.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 90B504C51D2F784D00F437D3 /* test.PNG */; };
+		90B504C81D2F843800F437D3 /* old.png in Resources */ = {isa = PBXBuildFile; fileRef = 90B504C71D2F843800F437D3 /* old.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		9039C7121CE1A09700D9CA38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9039C7151CE1A09700D9CA38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9039C7171CE1A09700D9CA38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90B504C51D2F784D00F437D3 /* test.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.PNG; sourceTree = "<group>"; };
+		90B504C71D2F843800F437D3 /* old.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = old.png; sourceTree = "<group>"; };
 		950F8CB03BB72ACEEF889FA2 /* libPods-webRTCTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-webRTCTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C24F473646A632C39C555F4A /* Pods-webRTCTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-webRTCTest.debug.xcconfig"; path = "Pods/Target Support Files/Pods-webRTCTest/Pods-webRTCTest.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -73,6 +77,8 @@
 		9039C7051CE1A09700D9CA38 /* webRTCTest */ = {
 			isa = PBXGroup;
 			children = (
+				90B504C71D2F843800F437D3 /* old.png */,
+				90B504C51D2F784D00F437D3 /* test.PNG */,
 				9039C7091CE1A09700D9CA38 /* AppDelegate.h */,
 				9039C70A1CE1A09700D9CA38 /* AppDelegate.m */,
 				9039C70C1CE1A09700D9CA38 /* ViewController.h */,
@@ -164,8 +170,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				9039C7161CE1A09700D9CA38 /* LaunchScreen.storyboard in Resources */,
+				90B504C81D2F843800F437D3 /* old.png in Resources */,
 				9039C7131CE1A09700D9CA38 /* Assets.xcassets in Resources */,
 				9039C7111CE1A09700D9CA38 /* Main.storyboard in Resources */,
+				90B504C61D2F784D00F437D3 /* test.PNG in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

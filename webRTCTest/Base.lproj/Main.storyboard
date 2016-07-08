@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10089" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10072.1"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -44,10 +44,14 @@
                                     <action selector="onSendMessageToPeer:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CZz-st-dM9"/>
                                 </connections>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="old.png" translatesAutoresizingMaskIntoConstraints="NO" id="fpd-ZX-y0H">
+                                <rect key="frame" x="147" y="47" width="240" height="128"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="imageReceived" destination="fpd-ZX-y0H" id="18r-Sd-evT"/>
                         <outlet property="localView" destination="E08-fV-cY8" id="elB-aa-3XA"/>
                         <outlet property="remoteView" destination="qKH-C9-jwX" id="Geg-LY-mW0"/>
                         <outlet property="roomText" destination="hJU-m8-gsX" id="fUC-Ox-2zl"/>
@@ -57,4 +61,7 @@
             </objects>
         </scene>
     </scenes>
+    <resources>
+        <image name="old.png" width="100" height="75"/>
+    </resources>
 </document>
