@@ -261,7 +261,8 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
             thumbnail = [UIImage imageNamed: @"old.png"];
             self.isToggle = YES;
         }
-        NSData *imagedata = UIImagePNGRepresentation(imageToSend);
+        //NSData *imagedata = UIImagePNGRepresentation(imageToSend);
+        NSData *imagedata = UIImageJPEGRepresentation(imageToSend, 0.8f);
         NSUInteger imageDataLength = [imagedata length];
         //-----------
         

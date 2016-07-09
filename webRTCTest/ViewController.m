@@ -225,7 +225,7 @@ int intMediaLength = 0;
         
     }
    // [myLabel setText:[NSString stringWithFormat:@"%d", [i intValue]]]; // show the result!
-    [self performSelector:@selector(incrementCounter:) withObject:[NSNumber numberWithInt:i.intValue+1] afterDelay:1];
+    [self performSelector:@selector(incrementCounter:) withObject:[NSNumber numberWithInt:i.intValue+1] afterDelay:0.2];
 }
 
 - (void)disconnect {
