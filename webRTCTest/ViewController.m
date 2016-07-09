@@ -11,9 +11,15 @@
 
 @interface ViewController ()
 
+@property NSMutableData *rxData;
+
 @end
 
 @implementation ViewController
+
+@synthesize rxData;
+int rxDataCount = 0;
+int intMediaLength = 0;
 
 @synthesize imageReceived;
 
@@ -75,8 +81,48 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         NSData *temp = rtcDataBuffer.data;
-        UIImage *imageRx= [UIImage imageWithData:temp];
-        [imageReceived setImage:imageRx];
+        
+        NSString* str = [[NSString alloc] initWithData:temp
+                                              encoding:NSUTF8StringEncoding];
+    
+        if (str && [str length] > 0){
+            NSLog(@"Contains string");
+            
+            NSError *error;
+            id jsonResult = [NSJSONSerialization JSONObjectWithData:temp options:0 error:&error];
+            if (jsonResult && ([jsonResult isKindOfClass:[NSDictionary class]]))
+            {
+                NSDictionary *dict = (NSDictionary*)jsonResult;
+                NSString *messageText = [dict objectForKey:@"message"];
+                
+                if (messageText)
+                {
+                    intMediaLength = [messageText intValue];
+                    rxData = nil;
+                    rxDataCount = 0;
+                    //NSLog(@"Direct Message received: [%@], int value is %d", messageText, intMediaLength);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        //[self.delegate onMessage:messageText sender:self];
+                    });
+                }
+            }
+        }else{
+            NSLog(@"Does't contains string");
+            
+            if(rxData==nil){
+                rxData = [[NSMutableData alloc] init];
+            }
+            
+            [rxData appendData:temp];
+            rxDataCount+=temp.length;
+            
+            if(rxDataCount==intMediaLength){
+                UIImage *imageRx= [UIImage imageWithData:rxData];
+                [imageReceived setImage:imageRx];
+            }
+        }
+
+        
     });
   
     //imageReceived.image = imageRx;

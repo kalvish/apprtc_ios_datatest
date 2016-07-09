@@ -251,27 +251,29 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
 - (void)sendMessage:(NSString*)message {
     if ([self isActive])
     {
-        NSError *error;
-        
-        
-        
-       // NSDictionary *messageDict = @{@"message": message};
-       // NSData *messageData = [NSJSONSerialization dataWithJSONObject:messageDict options:0 error:&error];
-        
+        //-----------
         UIImage * thumbnail = nil;
         if(self.isToggle){
-        //NSData *sendingData = UIImagePNGRepresentation([UIImage imageNamed:@"test.PNG"]);
-          thumbnail = [UIImage imageNamed: @"test.PNG"];
+            //NSData *sendingData = UIImagePNGRepresentation([UIImage imageNamed:@"test.PNG"]);
+            thumbnail = [UIImage imageNamed: @"test2.PNG"];
             self.isToggle = NO;
         }else{
             thumbnail = [UIImage imageNamed: @"old.png"];
             self.isToggle = YES;
         }
         NSData *imagedata = UIImagePNGRepresentation(thumbnail);
+        NSUInteger imageDataLength = [imagedata length];
+        //-----------
+        
+        
+        NSError *error;
+        int tempInt = imageDataLength;
+        NSDictionary *messageDict = @{@"message": [NSString stringWithFormat:@"%d",tempInt]};
+        NSData *messageData = [NSJSONSerialization dataWithJSONObject:messageDict options:0 error:&error];
         if (!error)
         {
-            //RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:messageData isBinary:NO];
-            RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:imagedata isBinary:NO];
+            RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:messageData isBinary:NO];
+            //RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:imagedata isBinary:NO];
             if ([_dataChannel sendData:data])
             {
                 //successHandler();
@@ -286,6 +288,43 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
         {
             //errorHandler(@"Unable to encode message to JSON");
         }
+
+        
+       // NSDictionary *messageDict = @{@"message": message};
+       // NSData *messageData = [NSJSONSerialization dataWithJSONObject:messageDict options:0 error:&error];
+        
+        NSUInteger chunkSize = 12 * 1024;
+        NSUInteger offset = 0;
+        do {
+            NSUInteger thisChunkSize = imageDataLength - offset > chunkSize ? chunkSize : imageDataLength - offset;
+            NSData* chunk = [NSData dataWithBytesNoCopy:(char *)[imagedata bytes] + offset
+                                                 length:thisChunkSize
+                                           freeWhenDone:NO];
+            NSLog(@"chunk length : %lu",(unsigned long)chunk.length);
+            RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:[NSData dataWithData:chunk] isBinary:NO];
+            if ([_dataChannel sendData:data])
+            {
+                //successHandler();
+                int a = 0;
+            }
+            else
+            {
+                //errorHandler(@"Message failed to send");
+            }
+            //[marrFileData addObject:[NSData dataWithData:chunk]];
+            offset += thisChunkSize;
+        } while (offset < imageDataLength);
+        
+    
+        //if (!error)
+        //{
+            //RTCDataBuffer *data = [[RTCDataBuffer alloc] initWithData:messageData isBinary:NO];
+        
+        //}
+        //else
+        //{
+            //errorHandler(@"Unable to encode message to JSON");
+       // }
         
        /* NSData *sendData = UIImagePNGRepresentation([UIImage imageNamed:@"test2.PNG"]);
         NSUInteger length = [sendData length];
