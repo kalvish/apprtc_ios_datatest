@@ -17,38 +17,38 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qKH-C9-jwX" userLabel="remoteView" customClass="RTCEAGLVideoView">
+                            <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qKH-C9-jwX" userLabel="remoteView" customClass="RTCEAGLVideoView">
                                 <rect key="frame" x="138" y="212" width="240" height="128"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E08-fV-cY8" userLabel="localView" customClass="RTCEAGLVideoView">
+                            <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E08-fV-cY8" userLabel="localView" customClass="RTCEAGLVideoView">
                                 <rect key="frame" x="147" y="420" width="240" height="128"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hJU-m8-gsX">
-                                <rect key="frame" x="455" y="323" width="97" height="30"/>
+                                <rect key="frame" x="11" y="28" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="31e-O5-wJQ">
-                                <rect key="frame" x="480" y="404" width="46" height="30"/>
+                                <rect key="frame" x="125" y="28" width="46" height="30"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
                                     <action selector="onclickstart:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ceW-hD-VqX"/>
                                 </connections>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="old.png" translatesAutoresizingMaskIntoConstraints="NO" id="fpd-ZX-y0H">
+                                <rect key="frame" x="20" y="86" width="537" height="462"/>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gLU-XD-oBs">
-                                <rect key="frame" x="493" y="502" width="34" height="30"/>
+                                <rect key="frame" x="185" y="28" width="34" height="30"/>
                                 <state key="normal" title="send"/>
                                 <connections>
                                     <action selector="onSendMessageToPeer:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CZz-st-dM9"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="old.png" translatesAutoresizingMaskIntoConstraints="NO" id="fpd-ZX-y0H">
-                                <rect key="frame" x="147" y="47" width="240" height="128"/>
-                            </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.33277168620000003" green="1" blue="0.98833401430000001" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
                         <outlet property="imageReceived" destination="fpd-ZX-y0H" id="18r-Sd-evT"/>
@@ -59,6 +59,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="291" y="188"/>
         </scene>
     </scenes>
     <resources>

@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-
+#import <QuartzCore/QuartzCore.h>
 
 @interface ViewController ()
 
@@ -203,9 +203,29 @@ int intMediaLength = 0;
 }
 
 -(void)onSendMessageToPeer:(id)sender {
+    
+    // start the loop
+    [self incrementCounter:[NSNumber numberWithInt:0]];
+    
+}
+
+-(void) incrementCounter:(NSNumber *)i {
     if(self.client){
-        [self.client sendMessage:@"Test message"];
+        if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
+            UIGraphicsBeginImageContextWithOptions(self.view.window.bounds.size, NO, [UIScreen mainScreen].scale);
+        else
+            UIGraphicsBeginImageContext(self.view.window.bounds.size);
+        
+        [self.view.window.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        //[imageReceived setImage:image];
+        [self.client sendMessage:image];
+        
+        
     }
+   // [myLabel setText:[NSString stringWithFormat:@"%d", [i intValue]]]; // show the result!
+    [self performSelector:@selector(incrementCounter:) withObject:[NSNumber numberWithInt:i.intValue+1] afterDelay:1];
 }
 
 - (void)disconnect {

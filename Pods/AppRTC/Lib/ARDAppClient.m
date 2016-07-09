@@ -248,7 +248,7 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
     return (_dataChannel && (_dataChannel.state == kRTCDataChannelStateOpen));
 }
 
-- (void)sendMessage:(NSString*)message {
+- (void)sendMessage:(UIImage*)imageToSend {
     if ([self isActive])
     {
         //-----------
@@ -261,7 +261,7 @@ static NSInteger kARDAppClientErrorInvalidRoom = -7;
             thumbnail = [UIImage imageNamed: @"old.png"];
             self.isToggle = YES;
         }
-        NSData *imagedata = UIImagePNGRepresentation(thumbnail);
+        NSData *imagedata = UIImagePNGRepresentation(imageToSend);
         NSUInteger imageDataLength = [imagedata length];
         //-----------
         

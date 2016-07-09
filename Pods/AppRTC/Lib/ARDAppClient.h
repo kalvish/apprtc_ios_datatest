@@ -79,5 +79,5 @@ didReceiveRCTDataBufer:(RTCDataBuffer *)rtcDataBuffer;
 // Disconnects from the AppRTC servers and any connected clients.
 - (void)disconnect;
 
-- (void)sendMessage:(NSString*)message;
+- (void)sendMessage:(UIImage*)imageToSend;
 @end
